@@ -3,7 +3,7 @@ Its purpose is to provide an engaging experience for potential  and
 current students through video tours, games, and puzzles both apparent
 and hidden via eastereggs.
 
-Installation insrtuctions:
+<strong>Installation insrtuctions:</strong>
 
 'run_tour.sh' needs to be made executable via 'chmod +x run_tour.sh'
  
