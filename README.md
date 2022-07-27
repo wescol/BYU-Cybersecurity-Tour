@@ -3,6 +3,8 @@ Its purpose is to provide an engaging experience for potential  and
 current students through video tours, games, and puzzles both apparent
 and hidden via eastereggs.
 
+Installation insrtuctions:
+
 'run_tour.sh' needs to be made executable via 'chmod +x run_tour.sh'
  
 After 'run_tour.sh' is made executable, create a cron job so that
@@ -23,6 +25,8 @@ crontab -e
 
 The cheat sheet is attached as a PDF and should be near the tour station.
 It gives hints to how ciphers function, and how to solve the included ciphers.
+
+Other notes and references:
 
 The 'Frogger' files (data directory and .py files that aren't Cyber_Tour.py)
 were downloaded from https://sourceforge.net/projects/pyfrogger/ and are open source.
