@@ -388,8 +388,8 @@ def run_tour_v2():
         cprint(Fore.LIGHTGREEN_EX + '1 - introduction')
         cprint(Fore.LIGHTGREEN_EX + '2 - local_files')
         cprint(Fore.LIGHTGREEN_EX + '3 - hello_world')
-        cprint(Fore.LIGHTGREEN_EX + '4 - kosmos_program')
-        cprint(Fore.LIGHTGREEN_EX + '5 - custom_entry')
+        #cprint(Fore.LIGHTGREEN_EX + '4 - kosmos_program') #incomplete
+        cprint(Fore.LIGHTGREEN_EX + '4 - custom_entry')
         cprint(Fore.LIGHTGREEN_EX + '0 - exit')
         cprint('')
         select = getpass.getpass("Select program, then press ENTER: ")
