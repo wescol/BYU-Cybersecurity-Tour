@@ -20,7 +20,7 @@ Creating the cron job can be done via the following commands:
 
 crontab -e
 
-@reboot sh /home/'<user>'/Cyber-Tour/run_tour.sh
+@reboot sh /home/\<user\>/Cyber-Tour/run_tour.sh
 
 
 The cheat sheet is attached as a PDF and should be near the tour station.
