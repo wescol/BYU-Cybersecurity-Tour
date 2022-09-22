@@ -1,4 +1,7 @@
+from ast import For
+from curses.ascii import isascii
 import subprocess
+from xml.sax.xmlreader import InputSource
 import climage
 from colorama import Fore, Style
 from termcolor import cprint
@@ -8,10 +11,20 @@ import os
 import sys
 #from ffpyplayer.player import MediaPlayer
 #import cv2
+from omxplayer.player import OMXPlayer
 from glitch_this import ImageGlitcher
 from PIL import Image, ImageDraw
 import numpy as np
 from random import uniform
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM) #Set GPIO mode to BCM
+GPIO.setup(11, GPIO.IN) #Set trigger pin
+
+def play_EcEn(x):
+    OMXPlayer('Digital_Embed.mp4', args='--no-osd -o alsa -b')
+
+GPIO.add_event_detect(11, GPIO.FALLING, callback = play_EcEn, bouncetime=100) #This establishes an event listener that will execute if a laser is shot at the target
 
 def idle(): #Matrix 'screensaver'
     subprocess.call(['cmatrix -bs'],shell=True) # this is a resource intensive command, an RPi 3 or newer should handle it without issue
@@ -48,11 +61,11 @@ def hack() -> int: #Aesthetic for "hacking" the system
     print(Style.RESET_ALL)
     if code == 'hax':
         time.sleep(1)
-        subprocess.call(['espeak-ng \"Access token received.\" -v us-mbrola-1 -p 0'],shell=True)
+        subprocess.call(['espeak-ng \"Access token received.\" -v mb-us1'],shell=True)
         cprint('\rprocessing...')
-        subprocess.call(['espeak-ng \"Processing!\" -v us-mbrola-1 -p 0'],shell=True)
+        subprocess.call(['espeak-ng \"Processing!\" -v mb-us1'],shell=True)
         for i in range(3):
-            subprocess.call(['espeak-ng \"Resolving!\" -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"Resolving!\" -v mb-us1'],shell=True)
             time.sleep(1)
         return 1
     else:
@@ -62,7 +75,7 @@ def access_denied(): #Plays alarm and prints large red blinking 'ACCEDD DENIED'
     for i in range(3):
         for j in range(3):
             os.system('play -nq -t alsa synth 0.6 square 150 synth 0.6 sine fmod 700-100')
-        subprocess.call(['espeak-ng \"Intrusion detected.\" -v us-mbrola-1 -p 0'],shell=True)
+        subprocess.call(['espeak-ng \"Intrusion detected.\" -v mb-us1'],shell=True)
     time.sleep(1)
     cprint(Style.RESET_ALL)
     print('')
@@ -77,7 +90,7 @@ def access_denied(): #Plays alarm and prints large red blinking 'ACCEDD DENIED'
     cprint('  ███    █▀  ████████▀  ████████▀    ██████████  ▄████████▀   ▄████████▀       ████████▀    ██████████  ▀█   █▀  █▀     ██████████ ████████▀  '.center(os.get_terminal_size().columns), 'red', attrs=['blink'])
     cprint(Style.RESET_ALL)
     for i in range(3):
-        subprocess.call(['espeak-ng \"Denied!\" -v us-mbrola-1 -p 0'],shell=True)
+        subprocess.call(['espeak-ng \"Denied!\" -v mb-us1'],shell=True)
         time.sleep(1)
 
 def access_granted(): #Prints large greeen blinking 'ACCESS GRANTED'
@@ -94,7 +107,7 @@ def access_granted(): #Prints large greeen blinking 'ACCESS GRANTED'
     cprint(Fore.LIGHTGREEN_EX + '  ███    █▀  ████████▀  ████████▀    ██████████  ▄████████▀   ▄████████▀         ████████▀    ███    ███   ███    █▀   ▀█   █▀     ▄████▀     ██████████ ████████▀  '.center(os.get_terminal_size().columns), attrs=['blink'])
     cprint(Fore.LIGHTGREEN_EX + '                                                                                              ███    ███                                                            '.center(os.get_terminal_size().columns), attrs=['blink'])
     cprint(Style.RESET_ALL)
-    subprocess.call(['espeak-ng \"Credentials accepted!\" -v us-mbrola-1 -p 0'],shell=True)
+    subprocess.call(['espeak-ng \"Credentials accepted!\" -v mb-us1'],shell=True)
     time.sleep(5)
 
 def interp_as_ascii(inp_string): #Assumes inp_string is a binary number and returns the ASCII interpretation thereof
@@ -267,9 +280,12 @@ def decrypter(inp_file): #Presents options for decrypting an input file
 def play_video_v2(inp_vid): #Plays input video
     subprocess.call(['ffplay -vcodec h264 -fs -noborder -autoexit ' + inp_vid], shell=True)
 
+def play_video_v3(inp_vid): #Plays input video (optimised for raspberry pi)
+    OMXPlayer(inp_vid, args='--no-osd -o alsa -b')
+
 def browse_files(): #Ciphers that are solvable with separate physical "cheat-sheet" (see READ.ME)
     print(chr(27) + "[2J")
-    subprocess.call(['espeak-ng \"These, are protected files.\" -v us-mbrola-1 -p 0'],shell=True)
+    subprocess.call(['espeak-ng \"These, are protected files.\" -v mb-us1'],shell=True)
     cprint(Fore.RED + ' - All files are encrypted - '.center(os.get_terminal_size().columns))
     cprint(Fore.RED + ' - Files must be decrypted before they can be read - '.center(os.get_terminal_size().columns))
     view_files = True
@@ -299,7 +315,7 @@ def hello_world(): #War Games easteregg
             cprint(Fore.LIGHTBLUE_EX + x, end='')
             sys.stdout.flush()
             time.sleep(0.03)
-        subprocess.call(['espeak-ng \"GREETINGS, PROFESSOR, FALLKEN.\" -v us-mbrola-1 -p 0'],shell=True)
+        subprocess.call(['espeak-ng \"GREETINGS, PROFESSOR, FALLKEN.\" -v mb-us1 -p 0'],shell=True)
         cprint('')
         cprint('')
         inp = input(Fore.LIGHTBLUE_EX + '')
@@ -309,7 +325,7 @@ def hello_world(): #War Games easteregg
                 cprint(Fore.LIGHTBLUE_EX + x, end='')
                 sys.stdout.flush()
                 time.sleep(0.03)
-            subprocess.call(['espeak-ng \"STRANGE GAME.\" -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"STRANGE GAME.\" -v mb-us1 -p 0'],shell=True)
             time.sleep(0.5)
             cprint('')
             for x in 'THE ONLY WINNING MOVE IS':
@@ -321,26 +337,22 @@ def hello_world(): #War Games easteregg
                 cprint(Fore.LIGHTBLUE_EX + x, end='')
                 sys.stdout.flush()
                 time.sleep(0.03)
-            subprocess.call(['espeak-ng \"THE, ONLY WINNING MOVE IS, NOT TO PLAY.\" -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"THE, ONLY WINNING MOVE IS, NOT TO PLAY.\" -v mb-us1 -p 0'],shell=True)
             time.sleep(1.5)
             cprint('')
             for x in 'HOW ABOUT A NICE GAME OF CHESS?':
                 cprint(Fore.LIGHTBLUE_EX + x, end='')
                 sys.stdout.flush()
                 time.sleep(0.03)
-            subprocess.call(['espeak-ng \"HOW, ABOUT A NICE, GAME OF, CHESS?\" -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"HOW, ABOUT A NICE, GAME OF, CHESS?\" -v mb-us1 -p 0'],shell=True)
             time.sleep(2)
         else:
             for x in 'WOULDN\'T YOU PERFER A NICE GAME OF CHESS?':
                 cprint(Fore.LIGHTBLUE_EX + x, end='')
                 sys.stdout.flush()
                 time.sleep(0.03)
-            subprocess.call(['espeak-ng \"WOULDN\'T YOU PERFER A NICE GAME OF CHESS?\" -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"WOULDN\'T YOU PERFER A NICE GAME OF CHESS?\" -v mb-us1 -p 0'],shell=True)
             time.sleep(2)
-
-def kosmos_prog(): #FIX ME - Some kind of hacking puzzle?
-    hacker_img = climage.convert('glitched_kosmo.gif', is_unicode=True) #code for printing image to terminal
-    print(hacker_img)
 
 def custom_cmd(): #konami code entrypoint up, up, down, down, left, right, left, right, B, A
     print(chr(27) + "[2J")
@@ -366,40 +378,41 @@ def custom_cmd(): #konami code entrypoint up, up, down, down, left, right, left,
     cprint('')
     time.sleep(2)
     if cmd == '8822464679': #Konami code
-        subprocess.Popen(['mpg123', '-q', 'frog.mp3']).wait()
-        subprocess.call(['espeak-ng \"Custom command accepted!\" -v us-mbrola-1 -p 0'],shell=True)
+        #subprocess.Popen(['mpg123', '-q', 'frog.mp3']).wait()
+        subprocess.call(['espeak-ng \"Custom command accepted!\" -v mb-us1'],shell=True)
         time.sleep(1)
-        subprocess.call([f'python pyfrogger.py {highscore}'],shell=True) #Frogger easteregg
+        subprocess.call([f'python pyfrogger.py'],shell=True) #Frogger easteregg
     else:
         cprint(Fore.LIGHTRED_EX + 'Invalid command.')
         time.sleep(2)
 
-def run_tour_v2():
+def run_tour_v2(): #Runs tour for both Cybersecurity and EcEn - Cybersecurity should use numpad inputs while EcEn can use the laser to run the tour.
     idling = True
     while idling: #while loop meant to loop infinitely for tours
         idle()
         print(chr(27) + "[2J")
         hacker_img = climage.convert('kosmo.jpg', is_unicode=True) #code for printing image to terminal
-        cprint(hacker_img.center(os.get_terminal_size().columns))
-        subprocess.call(['espeak-ng \"Welcome. We\'ve been expecting you.\" -v us-mbrola-1 -p 0'],shell=True)
+        cprint(hacker_img)
+        subprocess.call(['espeak-ng -v mb-us1 \"Well come. We have been expecting you.\"'],shell=True)
         time.sleep(0.2)
-        #print "Kosmo program or something like that"
         cprint(Fore.LIGHTGREEN_EX + '    - MENU -')
-        cprint(Fore.LIGHTGREEN_EX + '1 - introduction')
-        cprint(Fore.LIGHTGREEN_EX + '2 - local_files')
-        cprint(Fore.LIGHTGREEN_EX + '3 - hello_world')
-        #cprint(Fore.LIGHTGREEN_EX + '4 - kosmos_program') #incomplete
-        cprint(Fore.LIGHTGREEN_EX + '4 - custom_entry')
+        cprint(Fore.LIGHTGREEN_EX + '1 - cyber_introduction')
+        cprint(Fore.LIGHTGREEN_EX + '2 - ecen_introduction')
+        cprint(Fore.LIGHTGREEN_EX + '3 - local_files')
+        cprint(Fore.LIGHTGREEN_EX + '4 - hello_world')
+        #cprint(Fore.LIGHTGREEN_EX + '5 - custom_entry')
         cprint(Fore.LIGHTGREEN_EX + '0 - exit')
         cprint('')
         select = getpass.getpass("Select program, then press ENTER: ")
         if select == '1': #Plays the tour video. File name must match that of video. Assumed file type is MP4
-            play_video_v2('Cybersecurity_-_First_Draft.mp4')
+            play_video_v3('Cybersecurity_Final.mp4') #THIS IS WHERE YOU CHANGE THE VIDEO FILE NAME IF NECESSARY
         elif select == '2':
+            cprint(Fore.RED + 'Shoot the target!!', attrs=['blink'])
+        elif select == '3':
             browse_files()
-        elif select == '3': #War Games easteregg
+        elif select == '4':
             hello_world()
-        elif select == '4': #Unfinished kosmos_prog
+        elif select == 'unimplemented': #War Games easteregg
             entry = hack()
             if entry:
                 access_granted()
@@ -410,7 +423,7 @@ def run_tour_v2():
             else:
                 access_denied()
                 continue
-        elif select == '5': #Allows for 'custom' inputs that resemble a gamepad (for Konami code input)
+        elif select == 'work_in_progress': #Allows for 'custom' inputs that resemble a gamepad (for Konami code input)
             custom_cmd()
         elif select == '159': #Verifone easteregg
             print(chr(27) + "[2J")
@@ -423,6 +436,12 @@ def run_tour_v2():
                 sys.stdout.flush()
                 time.sleep(uniform(0,0.07))
             time.sleep(2)
+        elif select == '404':
+            print(chr(27) + "[2J")
+            cprint(Fore.RED + "ERROR:", end=" ")
+            time.sleep(1)
+            cprint(Fore.WHITE + "Not found!")
+            time.sleep(3)
         elif select == '1337': #'L33t' easteregg
             print(chr(27) + "[2J")
             alert()
@@ -436,27 +455,27 @@ def run_tour_v2():
                 sys.stdout.flush()
                 time.sleep(uniform(0,0.07))
             cprint(' ')
-            subprocess.call(['espeak-ng \"Looks like we\'ve got a REAL, hacker over here." -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"Looks like we\'ve got a REAL, hacker over here." -v mb-us1'],shell=True)
             time.sleep(1)
             for char in "L00k 4t y()u 4nd y0u23 f4ncy l33t 5p34k":
                 cprint(Fore.WHITE + char, end='')
                 sys.stdout.flush()
                 time.sleep(uniform(0,0.07))
-            subprocess.call(['espeak-ng \"Look at you and your fancy leet speak." -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"Look at you and your fancy leet speak." -v mb-us1'],shell=True)
             time.sleep(1)
             cprint('')
             for char in "W311 6u355 wh47?":
                 cprint(Fore.WHITE + char, end='')
                 sys.stdout.flush()
                 time.sleep(uniform(0,0.07))
-            subprocess.call(['espeak-ng \"Well guess what." -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"Well guess what." -v mb-us1'],shell=True)
             time.sleep(1)
             cprint('')
             for char in "411 y0u'23 b453 423 b3l()n6 t0 u5":
                 cprint(Fore.WHITE + char, end='')
                 sys.stdout.flush()
                 time.sleep(uniform(0,0.07))
-            subprocess.call(['espeak-ng \"All your base are belawng to us." -v us-mbrola-1 -p 0'],shell=True)
+            subprocess.call(['espeak-ng \"All your base are belawng to us." -v mb-us1'],shell=True)
             time.sleep(3)
         elif select == '0':
             cprint(Fore.LIGHTGREEN_EX + 'Re-enterring stasis', end='')
@@ -475,10 +494,6 @@ def run_tour_v2():
             
 run_tour_v2()
 
-
-
-
-# numpad as input?
 # book with hints or eastereggs?
 # catch Kosmo doing something sp00ky?
 # Kosmo interracts end of video to say something?
@@ -486,65 +501,3 @@ run_tour_v2()
 # storyline? 2 different stations?
 # history of cybersecurity?
 # escape rooms puzzles? Cryptography puzzles? Eastereggs!
-
-
-
-
-
-#Outdated/unused code for reference
-
-#def run_tour():
-#    idling = True
-#    try:
-#        while idling: #while loop meant to loop infinitely for tours
-#            idle()
-#            print(chr(27) + "[2J")
-#            response = hack()
-#            if response == 1:
-#                access_granted()
-#                play_video_v2('test.mp4') #file needs to exist within same directory as this script
-#            elif response == 2: #code for an easteregg input, just for fun
-#                time.sleep(1)
-#                alert()
-#                time.sleep(1)
-#                subprocess.call(['espeak-ng \"Unexpected input. Attempting to resolve!\" -v us-mbrola-1 -p 0'],shell=True)
-#                #play_video('easteregg.mp4')
-#            else:
-#                access_denied()
-#    except:
-#        print('An exception occurred or the program exited prematurely.')
-
-#def play_video(video_select): #allows more action to audio playback in case video playback doesn't match
-#    try:
-#        video_tour = cv2.VideoCapture(video_select)
-#        player = MediaPlayer(video_select)
-#        window_name = "window"
-#        interframe_wait_ms = 30
-#        try:
-#            if video_tour.isOpened():
-#                cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN) #make video run in fullscreen
-#                cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-#                while(video_tour.isOpened()): #read until video is completed
-#                    grabbed, frame = video_tour.read() #capture frame-by-frame
-#                    audio_frame, val = player.get_frame()
-#                    try:
-#                        if grabbed == True:
-#                            if cv2.waitKey(interframe_wait_ms) & 0xFF == ord('q'): #press Q to  exit
-#                                break
-#                            cv2.imshow(window_name, frame) #commence playback
-#                            if val != 'eof' and audio_frame is not None:
-#                                img, t = audio_frame #audio
-#                        else:
-#                            break
-#                    except:
-#                        cprint(Style.RESET_ALL) 
-#                        print("Video playback error") #if thrown could indicate problem with file itself
-#                        break
-#        except:
-#            cprint(Style.RESET_ALL)
-#            print('Error encountered opening video file')
-#        video_tour.release() #release video capture object
-#        cv2.destroyAllWindows() #closes all frames
-#    except:
-#        cprint(Style.RESET_ALL)
-#        print('Exception occurred: Video playback failed.') #indicates an issue with cv2 object
